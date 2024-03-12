@@ -1,13 +1,13 @@
-package com.guraband.coupon
+package com.guraband.couponapi
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class CouponApplicationTests {
+class CouponApiApplicationTests {
 
-    @Test
-    fun contextLoads() {
-    }
+	@Test
+	fun contextLoads() {
+	}
 
 }
