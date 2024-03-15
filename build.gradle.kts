@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.2.3"
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.22"
+    kotlin("plugin.jpa") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
 }
 
@@ -22,6 +23,8 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -46,6 +49,7 @@ subprojects {
         plugin("io.spring.dependency-management")
         plugin("kotlin")
         plugin("org.jetbrains.kotlin.plugin.spring")
+        plugin("org.jetbrains.kotlin.plugin.jpa")
     }
 
     repositories {
