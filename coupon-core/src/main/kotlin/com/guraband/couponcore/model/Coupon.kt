@@ -1,6 +1,8 @@
 package com.guraband.couponcore.model
 
 import com.guraband.couponcore.enums.CouponType
+import com.guraband.couponcore.enums.ErrorCode
+import com.guraband.couponcore.exception.CouponIssueException
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -14,7 +16,7 @@ class Coupon(
 
     private val totalQuantity: Int? = null,
 
-    private var issuedQuantity: Int = 0,
+    private var _issuedQuantity: Int = 0,
 
     val discountAmount: Int = 0,
 
@@ -29,9 +31,8 @@ class Coupon(
     val id: Long? = null
 ) : BaseEntity() {
 
-    fun getIssuesQuantity() : Int {
-        return issuedQuantity
-    }
+    val issuedQuantity: Int
+        get() = _issuedQuantity
 
     fun availableIssueQuantity(): Boolean {
         if (totalQuantity == null) {
@@ -56,13 +57,13 @@ class Coupon(
 
     fun issue() {
         if (!availableIssueQuantity()) {
-            throw RuntimeException("수량 오류")
+            throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 : $issuedQuantity / $totalQuantity")
         }
 
         if (!availableIssueDate()) {
-            throw RuntimeException("날짜 오류")
+            throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_DATE, "발급 기한 : $dateIssueStart ~ $dateIssueEnd")
         }
 
-        issuedQuantity++
+        _issuedQuantity++
     }
 }
