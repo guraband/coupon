@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.jpa") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
+    kotlin("kapt") version "1.9.22"
 }
 
 group = "com.guraband"
@@ -48,6 +49,7 @@ subprojects {
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
         plugin("kotlin")
+        plugin("kotlin-kapt")
         plugin("org.jetbrains.kotlin.plugin.spring")
         plugin("org.jetbrains.kotlin.plugin.jpa")
     }
@@ -64,6 +66,11 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+        // QueryDSL
+        implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+        kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+        kapt("jakarta.persistence:jakarta.persistence-api")
 
         runtimeOnly("com.h2database:h2")
         runtimeOnly("com.mysql:mysql-connector-j")

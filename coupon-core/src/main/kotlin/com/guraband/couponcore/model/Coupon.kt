@@ -16,6 +16,7 @@ class Coupon(
 
     private val totalQuantity: Int? = null,
 
+    @Column(name = "issuedQuantity")
     private var _issuedQuantity: Int = 0,
 
     val discountAmount: Int = 0,
