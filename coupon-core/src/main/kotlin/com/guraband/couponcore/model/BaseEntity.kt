@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 @MappedSuperclass
 abstract class BaseEntity(
     @CreatedDate
-    val dateCreated: LocalDateTime? = null,
+    var dateCreated: LocalDateTime? = null,
 
     @LastModifiedDate
-    val dateUpdated: LocalDateTime? = null,
+    var dateUpdated: LocalDateTime? = null,
 )

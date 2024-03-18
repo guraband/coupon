@@ -18,10 +18,10 @@ class CouponIssueService(
 ) {
 
     @Transactional
-    fun issue(couponId: Long, userId: Long) {
+    fun issue(couponId: Long, userId: Long) : CouponIssue {
         val coupon = findCoupon(couponId)
         coupon.issue()
-        saveCouponIssue(couponId, userId)
+        return saveCouponIssue(couponId, userId)
     }
 
     @Transactional(readOnly = true)
@@ -32,18 +32,20 @@ class CouponIssueService(
     }
 
     @Transactional
-    fun saveCouponIssue(couponId: Long, userId: Long) {
+    fun saveCouponIssue(couponId: Long, userId: Long) : CouponIssue {
         checkCouponAlreadyIssued(couponId, userId)
 
         val couponIssue = CouponIssue(couponId, userId)
-        couponIssueJpaRepository.save(couponIssue)
+        return couponIssueJpaRepository.save(couponIssue)
     }
 
     private fun checkCouponAlreadyIssued(couponId: Long, userId: Long) {
         couponIssueRepository.findFirstCouponIssue(couponId, userId)
-            ?: throw CouponIssueException(
-                ErrorCode.DUPLICATED_COUPON_ISSUE,
-                "이미 발급된 쿠폰입니다. userId : $userId, couponId : $couponId"
-            )
+            ?.let{
+                throw CouponIssueException(
+                    ErrorCode.DUPLICATED_COUPON_ISSUE,
+                    "이미 발급된 쿠폰입니다. userId : $userId, couponId : $couponId"
+                )
+            }
     }
 }
