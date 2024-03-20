@@ -68,6 +68,7 @@ subprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
         implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+        implementation("org.redisson:redisson:3.27.2")
 
         // QueryDSL
         implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
