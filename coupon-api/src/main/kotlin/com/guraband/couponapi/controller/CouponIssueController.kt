@@ -15,6 +15,7 @@ class CouponIssueController(
     @PostMapping("/v1/issue")
     fun issueV1(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
         couponIssueRequestService.issueRequestV1(request)
+//        couponIssueRequestService.issueRequestV2(request)
 
         return CouponIssueResponse(true)
     }

@@ -20,4 +20,9 @@ class CouponIssueRequestService(
 
         logger.info { "[쿠폰 발급 완료] couponId : ${request.couponId}, ${request.userId}" }
     }
+
+    fun issueRequestV2(request: CouponIssueRequest) {
+        couponIssueService.issueWithDBLock(request.couponId, request.userId)
+        logger.info { "[쿠폰 발급 완료] couponId : ${request.couponId}, ${request.userId}" }
+    }
 }

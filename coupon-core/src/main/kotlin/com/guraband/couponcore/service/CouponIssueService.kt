@@ -24,11 +24,24 @@ class CouponIssueService(
         return saveCouponIssue(couponId, userId)
     }
 
+    @Transactional
+    fun issueWithDBLock(couponId: Long, userId: Long): CouponIssue {
+        val coupon = findCouponWithLock(couponId)
+        coupon.issue()
+        return saveCouponIssue(couponId, userId)
+    }
+
     @Transactional(readOnly = true)
     fun findCoupon(couponId: Long): Coupon {
         return couponJpaRepository.findById(couponId).orElseThrow {
             throw CouponIssueException(ErrorCode.COUPON_NOT_EXIST, "쿠폰이 존재하지 않습니다. ($couponId)")
         }
+    }
+
+    @Transactional
+    fun findCouponWithLock(couponId: Long): Coupon {
+        return couponJpaRepository.findCouponWithLock(couponId)
+            ?: throw CouponIssueException(ErrorCode.COUPON_NOT_EXIST, "쿠폰이 존재하지 않습니다. ($couponId)")
     }
 
     @Transactional
