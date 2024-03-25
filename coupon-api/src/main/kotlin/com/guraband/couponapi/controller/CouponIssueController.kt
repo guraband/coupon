@@ -19,4 +19,11 @@ class CouponIssueController(
 
         return CouponIssueResponse(true)
     }
+
+    @PostMapping("/v1/issue-async")
+    fun asyncIssueV1(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
+        couponIssueRequestService.asyncIssueRequestV1(request)
+
+        return CouponIssueResponse(true)
+    }
 }

@@ -1,8 +1,5 @@
 package com.guraband.couponcore.config
 
-import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
 import org.redisson.config.Config
