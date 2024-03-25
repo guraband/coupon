@@ -9,6 +9,6 @@ class RedisRepository(
 ) {
 
     fun zAdd(key: String, value: String, score: Double): Boolean? {
-        return redisTemplate.opsForZSet().add(key, value, score)
+        return redisTemplate.opsForZSet().addIfAbsent(key, value, score)
     }
 }
