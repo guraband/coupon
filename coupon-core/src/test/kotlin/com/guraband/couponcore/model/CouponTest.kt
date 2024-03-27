@@ -13,7 +13,7 @@ class CouponTest {
     @DisplayName("발급수량이 남아있다면 true 반환")
     fun availableIssueQuantityTest1() {
         // given
-        val coupon = Coupon(totalQuantity = 100, _issuedQuantity = 99)
+        val coupon = Coupon(_totalQuantity = 100, _issuedQuantity = 99)
 
         // when
         val result = coupon.availableIssueQuantity()
@@ -26,7 +26,7 @@ class CouponTest {
     @DisplayName("발급수량이 소진되었다면 false 반환")
     fun availableIssueQuantityTest2() {
         // given
-        val coupon = Coupon(totalQuantity = 100, _issuedQuantity = 100)
+        val coupon = Coupon(_totalQuantity = 100, _issuedQuantity = 100)
 
         // when
         val result = coupon.availableIssueQuantity()
@@ -101,7 +101,7 @@ class CouponTest {
     fun issueTest1() {
         // given
         val coupon = Coupon(
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 99,
             dateIssueStart = LocalDateTime.now().plusDays(-2),
             dateIssueEnd = LocalDateTime.now().plusDays(1)
@@ -119,7 +119,7 @@ class CouponTest {
     fun issueTest2() {
         // given
         val coupon = Coupon(
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 100,
             dateIssueStart = LocalDateTime.now().plusDays(-2),
             dateIssueEnd = LocalDateTime.now().plusDays(1)
@@ -137,7 +137,7 @@ class CouponTest {
     fun issueTest3() {
         // given
         val coupon = Coupon(
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 99,
             dateIssueStart = LocalDateTime.now().plusDays(-2),
             dateIssueEnd = LocalDateTime.now().plusDays(-1)

@@ -29,7 +29,12 @@ class CouponIssueRequestService(
     }
 
     fun asyncIssueRequestV1(request: CouponIssueRequest) {
-        asyncCouponIssueService.issue(request.couponId, request.userId)
+        asyncCouponIssueService.issueUsingRedisSortedSet(request.couponId, request.userId)
+        logger.info { "[쿠폰 발급 완료] couponId : ${request.couponId}, ${request.userId}" }
+    }
+
+    fun asyncIssueRequestV2(request: CouponIssueRequest) {
+        asyncCouponIssueService.issueUsingRedisSet(request.couponId, request.userId)
         logger.info { "[쿠폰 발급 완료] couponId : ${request.couponId}, ${request.userId}" }
     }
 }

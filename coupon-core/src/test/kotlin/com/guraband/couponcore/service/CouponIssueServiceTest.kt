@@ -67,7 +67,7 @@ class CouponIssueServiceTest @Autowired constructor(
         val coupon = Coupon(
             title = "선착순 쿠폰",
             couponType = CouponType.FIRST_COME_FIRST_SERVE,
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 0,
             dateIssueStart = LocalDateTime.now().minusDays(1),
             dateIssueEnd = LocalDateTime.now().plusDays(1),
@@ -93,7 +93,7 @@ class CouponIssueServiceTest @Autowired constructor(
         val coupon = Coupon(
             title = "선착순 쿠폰",
             couponType = CouponType.FIRST_COME_FIRST_SERVE,
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 100,
             dateIssueStart = LocalDateTime.now().minusDays(1),
             dateIssueEnd = LocalDateTime.now().plusDays(1),
@@ -115,7 +115,7 @@ class CouponIssueServiceTest @Autowired constructor(
         val coupon = Coupon(
             title = "선착순 쿠폰",
             couponType = CouponType.FIRST_COME_FIRST_SERVE,
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 0,
             dateIssueStart = LocalDateTime.now().minusDays(2),
             dateIssueEnd = LocalDateTime.now().minusDays(1),
@@ -138,7 +138,7 @@ class CouponIssueServiceTest @Autowired constructor(
         val coupon = Coupon(
             title = "선착순 쿠폰",
             couponType = CouponType.FIRST_COME_FIRST_SERVE,
-            totalQuantity = 100,
+            _totalQuantity = 100,
             _issuedQuantity = 0,
             dateIssueStart = LocalDateTime.now().minusDays(1),
             dateIssueEnd = LocalDateTime.now().plusDays(1),

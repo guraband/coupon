@@ -14,7 +14,8 @@ class Coupon(
     @Enumerated(EnumType.STRING)
     val couponType: CouponType = CouponType.FIRST_COME_FIRST_SERVE,
 
-    private val totalQuantity: Int? = null,
+    @Column(name = "totalQuantity")
+    private val _totalQuantity: Int? = null,
 
     @Column(name = "issuedQuantity")
     private var _issuedQuantity: Int = 0,
@@ -31,15 +32,18 @@ class Coupon(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 ) : BaseEntity() {
+    val totalIssueQuantity: Int?
+
+        get() = _totalQuantity
 
     val issuedQuantity: Int
         get() = _issuedQuantity
 
     fun availableIssueQuantity(): Boolean {
-        if (totalQuantity == null) {
+        if (_totalQuantity == null) {
             return true
         }
-        return issuedQuantity < totalQuantity
+        return issuedQuantity < _totalQuantity
     }
 
     fun availableIssueDate(): Boolean {
@@ -58,7 +62,7 @@ class Coupon(
 
     fun issue() {
         if (!availableIssueQuantity()) {
-            throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 : $issuedQuantity / $totalQuantity")
+            throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 : $issuedQuantity / $_totalQuantity")
         }
 
         if (!availableIssueDate()) {
