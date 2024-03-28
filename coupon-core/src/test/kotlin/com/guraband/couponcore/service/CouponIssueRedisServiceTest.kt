@@ -40,7 +40,7 @@ class CouponIssueRedisServiceTest @Autowired constructor(
         val totalIssueQuantity = 10
         val couponId = 1L
         (1..10).forEach {
-            redisTemplate.opsForSet().add(getIssueRequestKey(couponId.toString()), it.toString())
+            redisTemplate.opsForSet().add(getIssueRequestKey(couponId), it.toString())
         }
 
         // when
@@ -70,7 +70,7 @@ class CouponIssueRedisServiceTest @Autowired constructor(
         // given
         val couponId = 1L
         val userId = 1L
-        redisTemplate.opsForSet().add(getIssueRequestKey(couponId.toString()), userId.toString())
+        redisTemplate.opsForSet().add(getIssueRequestKey(couponId), userId.toString())
 
         // when
         val result = couponIssueRedisService.availableUserIssueQuantity(couponId, userId)

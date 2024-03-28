@@ -2,7 +2,7 @@ package com.guraband.couponcore.util
 
 class CouponRedisUtil {
     companion object {
-        fun getIssueRequestKey(key: String) : String {
+        fun getIssueRequestKey(key: Long) : String {
             return "issue.request.couponId:$key"
         }
 

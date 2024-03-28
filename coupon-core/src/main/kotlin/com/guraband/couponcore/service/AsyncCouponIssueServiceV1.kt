@@ -2,6 +2,7 @@ package com.guraband.couponcore.service
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.guraband.couponcore.component.DistributeLockExecutor
 import com.guraband.couponcore.enums.ErrorCode
 import com.guraband.couponcore.exception.CouponIssueException
 import com.guraband.couponcore.model.CouponIssueRequest
@@ -16,6 +17,7 @@ class AsyncCouponIssueServiceV1(
     private val redisRepository: RedisRepository,
     private val couponIssueRedisService: CouponIssueRedisService,
     private val couponIssueService: CouponIssueService,
+    private val distributeLockExecutor: DistributeLockExecutor,
 ) {
     @Transactional
     fun issueUsingRedisSortedSet(couponId: Long, userId: Long) {
@@ -31,29 +33,31 @@ class AsyncCouponIssueServiceV1(
         if (!coupon.availableIssueDate()) {
             throw CouponIssueException(
                 ErrorCode.INVALID_COUPON_ISSUE_DATE,
-                "발급 기한 : $coupon.dateIssueStart ~ $coupon.dateIssueEnd"
+                "발급 기한 : ${coupon.dateIssueStart} ~ ${coupon.dateIssueEnd}"
             )
         }
 
-        if (!couponIssueRedisService.availableTotalIssueQuantity(coupon.totalIssueQuantity, couponId)) {
-            throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 초과 : $coupon.totalIssueQuantity")
-        }
+        distributeLockExecutor.execute("lock_$couponId", 3_000, 3_000) {
+            if (!couponIssueRedisService.availableTotalIssueQuantity(coupon.totalIssueQuantity, couponId)) {
+                throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 초과 : $coupon.totalIssueQuantity")
+            }
 
-        if (!couponIssueRedisService.availableUserIssueQuantity(couponId, userId)) {
-            throw CouponIssueException(
-                ErrorCode.DUPLICATED_COUPON_ISSUE,
-                "이미 발급된 쿠폰입니다. userId : $userId, couponId : $couponId"
-            )
-        }
+            if (!couponIssueRedisService.availableUserIssueQuantity(couponId, userId)) {
+                throw CouponIssueException(
+                    ErrorCode.DUPLICATED_COUPON_ISSUE,
+                    "이미 발급된 쿠폰입니다. userId : $userId, couponId : $couponId"
+                )
+            }
 
-        issueRequest(couponId, userId)
+            issueRequest(couponId, userId)
+        }
     }
 
     private fun issueRequest(couponId: Long, userId: Long) {
         val issueRequest = CouponIssueRequest(couponId, userId)
         try {
             val value = jacksonObjectMapper().writeValueAsString(issueRequest)
-            redisRepository.sAdd(getIssueRequestKey(couponId.toString()), userId.toString())
+            redisRepository.sAdd(getIssueRequestKey(couponId), userId.toString())
             redisRepository.rPush(getIssueRequestQueueKey(), value)
         } catch (e : JsonProcessingException) {
             throw CouponIssueException(ErrorCode.FAIL_COUPON_ISSUE_REQUEST, "input : $issueRequest")

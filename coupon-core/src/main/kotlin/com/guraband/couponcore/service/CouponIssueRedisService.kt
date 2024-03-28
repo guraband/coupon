@@ -13,12 +13,12 @@ class CouponIssueRedisService(
             return true
         }
 
-        val key = getIssueRequestKey(couponId.toString())
+        val key = getIssueRequestKey(couponId)
         return totalQuantity > (redisRepository.sCard(key) ?: 0)
     }
 
     fun availableUserIssueQuantity(couponId: Long, userId: Long): Boolean {
-        val key = getIssueRequestKey(couponId.toString())
+        val key = getIssueRequestKey(couponId)
         return !(redisRepository.sIsMember(key, userId.toString()) ?: false)
     }
 }
