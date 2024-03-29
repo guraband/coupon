@@ -18,6 +18,7 @@ class AsyncCouponIssueServiceV1(
     private val couponIssueRedisService: CouponIssueRedisService,
     private val couponIssueService: CouponIssueService,
     private val distributeLockExecutor: DistributeLockExecutor,
+    private val couponCacheService: CouponCacheService,
 ) {
     @Transactional
     fun issueUsingRedisSortedSet(couponId: Long, userId: Long) {
