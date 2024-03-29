@@ -1,5 +1,6 @@
 package com.guraband.couponcore.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
@@ -9,20 +10,20 @@ import com.guraband.couponcore.enums.ErrorCode
 import com.guraband.couponcore.exception.CouponIssueException
 import java.time.LocalDateTime
 
-class CouponRedisEntity(
-    coupon: Coupon
+class CouponRedisEntity @JsonCreator constructor(
+    val id:Long,
+    val couponType:CouponType,
+    val totalQuantity:Int?,
+    val dateIssueStart: LocalDateTime?,
+    val dateIssueEnd: LocalDateTime?
 ) {
-    val id = coupon.id!!
-    val couponType = coupon.couponType
-    val totalQuantity = coupon.totalIssueQuantity
-
-    @JsonSerialize(using = LocalDateTimeSerializer::class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer::class)
-    val dateIssueStart: LocalDateTime? = coupon.dateIssueStart
-
-    @JsonSerialize(using = LocalDateTimeSerializer::class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer::class)
-    val dateIssueEnd: LocalDateTime? = coupon.dateIssueEnd
+    constructor(coupon: Coupon) : this(
+        coupon.id!!,
+        coupon.couponType,
+        coupon.totalIssueQuantity,
+        coupon.dateIssueStart,
+        coupon.dateIssueEnd
+    )
 
     private fun availableIssueDate(): Boolean {
         val now = LocalDateTime.now()
@@ -30,7 +31,7 @@ class CouponRedisEntity(
                 && (dateIssueEnd == null || dateIssueEnd.isAfter(now))
     }
 
-    fun checkIssuableCoupon() {
+    fun validate() {
         if (!availableIssueDate()) {
             throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_DATE, "발급 기한 : $dateIssueStart ~ $dateIssueEnd")
         }

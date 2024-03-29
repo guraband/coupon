@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional
 class AsyncCouponIssueServiceV1(
     private val redisRepository: RedisRepository,
     private val couponIssueRedisService: CouponIssueRedisService,
-    private val couponIssueService: CouponIssueService,
     private val distributeLockExecutor: DistributeLockExecutor,
     private val couponCacheService: CouponCacheService,
 ) {
@@ -29,27 +28,11 @@ class AsyncCouponIssueServiceV1(
 
     @Transactional
     fun issueUsingRedisSet(couponId: Long, userId: Long) {
-        val coupon = couponIssueService.findCoupon(couponId)
-
-        if (!coupon.availableIssueDate()) {
-            throw CouponIssueException(
-                ErrorCode.INVALID_COUPON_ISSUE_DATE,
-                "발급 기한 : ${coupon.dateIssueStart} ~ ${coupon.dateIssueEnd}"
-            )
-        }
+        val coupon = couponCacheService.getCouponCache(couponId)
+        coupon.validate()
 
         distributeLockExecutor.execute("lock_$couponId", 3_000, 3_000) {
-            if (!couponIssueRedisService.availableTotalIssueQuantity(coupon.totalIssueQuantity, couponId)) {
-                throw CouponIssueException(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY, "수량 초과 : $coupon.totalIssueQuantity")
-            }
-
-            if (!couponIssueRedisService.availableUserIssueQuantity(couponId, userId)) {
-                throw CouponIssueException(
-                    ErrorCode.DUPLICATED_COUPON_ISSUE,
-                    "이미 발급된 쿠폰입니다. userId : $userId, couponId : $couponId"
-                )
-            }
-
+            couponIssueRedisService.checkCouponIssueQuantity(coupon, userId)
             issueRequest(couponId, userId)
         }
     }
@@ -60,7 +43,7 @@ class AsyncCouponIssueServiceV1(
             val value = jacksonObjectMapper().writeValueAsString(issueRequest)
             redisRepository.sAdd(getIssueRequestKey(couponId), userId.toString())
             redisRepository.rPush(getIssueRequestQueueKey(), value)
-        } catch (e : JsonProcessingException) {
+        } catch (e: JsonProcessingException) {
             throw CouponIssueException(ErrorCode.FAIL_COUPON_ISSUE_REQUEST, "input : $issueRequest")
         }
     }
