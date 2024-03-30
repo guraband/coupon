@@ -22,14 +22,21 @@ class CouponIssueController(
 
     @PostMapping("/v1/issue-async")
     fun asyncIssueV1(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
-        couponIssueRequestService.asyncIssueRequestV1(request)
+        couponIssueRequestService.asyncIssueRequestUsingSortedSet(request)
 
         return CouponIssueResponse(true)
     }
 
-    @PostMapping("/v2/issue-async")
-    fun asyncIssueV2(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
-        couponIssueRequestService.asyncIssueRequestV2(request)
+    @PostMapping("/v1/issue-async-set")
+    fun asyncIssueUsingSetV1(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
+        couponIssueRequestService.asyncIssueRequestUsingSetV1(request)
+
+        return CouponIssueResponse(true)
+    }
+
+    @PostMapping("/v2/issue-async-set")
+    fun asyncIssueUsingSetV2(@RequestBody request: CouponIssueRequest): CouponIssueResponse {
+        couponIssueRequestService.asyncIssueRequestUsingSetV2(request)
 
         return CouponIssueResponse(true)
     }
