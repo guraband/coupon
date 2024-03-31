@@ -41,6 +41,18 @@ class RedisRepository(
         return redisTemplate.opsForList().rightPush(key, value)
     }
 
+    fun lSize(key: String): Long? {
+        return redisTemplate.opsForList().size(key)
+    }
+
+    fun lIndex(key: String, index: Long): String? {
+        return redisTemplate.opsForList().index(key, index)
+    }
+
+    fun lPop(key: String): String? {
+        return redisTemplate.opsForList().leftPop(key)
+    }
+
     fun issueRequest(couponId: Long, userId: Long, totalIssueQuantity: Int?) {
         try {
             val issueRequestKey = getIssueRequestKey(couponId)
